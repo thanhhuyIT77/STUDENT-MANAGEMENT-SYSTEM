@@ -8,12 +8,20 @@ if(isset($_POST['sessionTermId']) && isset($_POST['dateTimeTaken']) && isset($_P
     $dateTimeTaken = $_POST['dateTimeTaken'];
     $classId = $_POST['classId'];
     
+    // Validate that the teacher is assigned to this class
+    if($classId != $_SESSION['classId']) {
+        echo '<div class="alert alert-danger">Bạn không có quyền truy cập lớp này!</div>';
+        exit();
+    }
+    
     // Get students with their existing attendance status
     $query = "SELECT tblstudents.*, 
-              COALESCE(tblattendance.status, '0') as attendanceStatus
+              COALESCE(tblattendance.status, '0') as attendanceStatus,
+              tblclass.className
               FROM tblstudents 
               LEFT JOIN tblattendance ON tblstudents.admissionNumber = tblattendance.admissionNo 
               AND tblattendance.dateTimeTaken = '$dateTimeTaken'
+              INNER JOIN tblclass ON tblstudents.classId = tblclass.Id
               WHERE tblstudents.classId = '$classId'
               ORDER BY tblstudents.firstName, tblstudents.lastName";
     
@@ -49,7 +57,7 @@ if(isset($_POST['sessionTermId']) && isset($_POST['dateTimeTaken']) && isset($_P
             echo '<td>'.$sn.'</td>';
             echo '<td>'.$row['firstName'].' '.$row['lastName'].' '.$row['otherName'].'</td>';
             echo '<td>'.$row['admissionNumber'].'</td>';
-            echo '<td>Lớp '.$classId.'</td>';
+            echo '<td>Lớp '.$row['className'].'</td>';
             echo '<td>';
             echo '<select class="form-control" name="status[]">';
             echo '<option value="0" '.($status == '0' ? 'selected' : '').'>Vắng</option>';
@@ -71,10 +79,18 @@ if(isset($_POST['sessionTermId']) && isset($_POST['dateTimeTaken']) && isset($_P
         echo '</div>';
         echo '</form>';
         
+        echo '<div class="alert alert-info mt-3">';
+        echo '<i class="fas fa-info-circle"></i> Tổng cộng: <strong>'.$num.'</strong> học sinh';
+        echo '</div>';
+        
     } else {
-        echo '<div class="alert alert-warning">Không có học sinh nào trong lớp này!</div>';
+        echo '<div class="alert alert-warning">';
+        echo '<i class="fas fa-exclamation-triangle"></i> Không có học sinh nào trong lớp này!';
+        echo '</div>';
     }
 } else {
-    echo '<div class="alert alert-danger">Dữ liệu không hợp lệ!</div>';
+    echo '<div class="alert alert-danger">';
+    echo '<i class="fas fa-times-circle"></i> Dữ liệu không hợp lệ!';
+    echo '</div>';
 }
 ?>

@@ -76,7 +76,7 @@ $attendanceRate = $totalAttendance > 0 ? round(($presentDays / $totalAttendance)
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-6">
-                      <p><strong>Họ và tên:</strong> <?php echo isset($rrw['firstName']) ? $rrw['firstName'] . ' ' . $rrw['lastName'] . ' ' . $rrw['otherName'] : 'N/A'; ?></p>
+                      <p><strong>Họ và tên:</strong> <?php echo isset($rrw['firstName']) ? $rrw['firstName'] . ' ' . $rrw['lastName']  : 'N/A'; ?></p>
                       <p><strong>Mã sinh viên:</strong> <?php echo isset($rrw['admissionNumber']) ? $rrw['admissionNumber'] : 'N/A'; ?></p>
                       <p><strong>Lớp:</strong> <?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?></p>
                     </div>

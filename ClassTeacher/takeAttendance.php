@@ -10,13 +10,19 @@ $rrw = array();
 
 // Get class information
 $query = "SELECT tblclass.className
-    FROM tblclassteacher
-    INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-    Where tblclassteacher.Id = '$_SESSION[userId]'";
+    FROM tblclass
+    WHERE tblclass.Id = '$_SESSION[classId]'";
 $rs = $conn->query($query);
 $num = $rs->num_rows;
 if($num > 0) {
     $rrw = $rs->fetch_assoc();
+} else {
+    // Redirect if teacher is not assigned to any class
+    echo "<script type = \"text/javascript\">
+    alert('Bạn chưa được phân công lớp nào!');
+    window.location = (\"../index.php\");
+    </script>";
+    exit();
 }
 
 // Handle attendance submission
@@ -38,7 +44,7 @@ if(isset($_POST['save'])){
         
         if(mysqli_num_rows($checkQuery) > 0) {
             // Update existing attendance
-            $updateQuery = mysqli_query($conn, "UPDATE tblattendance SET status = '$status' WHERE admissionNo = '$studentId' AND dateTimeTaken = '$dateTimeTaken'");
+            $updateQuery = mysqli_query($conn, "UPDATE tblattendance SET status = '$status', classId = '$_SESSION[classId]' WHERE admissionNo = '$studentId' AND dateTimeTaken = '$dateTimeTaken'");
             
             if($updateQuery) {
                 $successCount++;
@@ -98,7 +104,7 @@ if(isset($_POST['save'])){
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Điểm danh học sinh - Lớp (<?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?>)</h1>
+            <h1 class="h3 mb-0 text-gray-800">Điểm danh học sinh - Lớp <?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?></h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="./">Trang chủ</a></li>
               <li class="breadcrumb-item active" aria-current="page">Điểm danh</li>
