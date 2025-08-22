@@ -4,6 +4,9 @@ error_reporting(0);
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
+// Initialize variables to prevent undefined variable warnings
+$rrw = array();
+
 $query = "SELECT tblclass.className,tblclassarms.classArmName 
     FROM tblclassteacher
     INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
@@ -12,12 +15,14 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
 
     $rs = $conn->query($query);
     $num = $rs->num_rows;
-    $rrw = $rs->fetch_assoc();
+    if($num > 0) {
+        $rrw = $rs->fetch_assoc();
+    }
 
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
   <meta charset="utf-8">
@@ -26,7 +31,7 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
   <meta name="description" content="">
   <meta name="author" content="">
   <link href="img/logo/attnlg.jpg" rel="icon">
-  <title>Dashboard</title>
+  <title>Danh sách học sinh</title>
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="css/ruang-admin.min.css" rel="stylesheet">
@@ -72,10 +77,10 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">All Student in (<?php echo $rrw['className'].' - '.$rrw['classArmName'];?>) Class</h1>
+            <h1 class="h3 mb-0 text-gray-800">Tất cả học sinh trong lớp (<?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?> - <?php echo isset($rrw['classArmName']) ? $rrw['classArmName'] : 'N/A'; ?>)</h1>
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="./">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">All Student in Class</li>
+              <li class="breadcrumb-item"><a href="./">Trang chủ</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Danh sách học sinh</li>
             </ol>
           </div>
 
@@ -89,19 +94,19 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
               <div class="col-lg-12">
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">All Student In Class</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Tất cả học sinh trong lớp</h6>
                 </div>
                 <div class="table-responsive p-3">
                   <table class="table align-items-center table-flush table-hover" id="dataTableHover">
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Other Name</th>
-                        <th>Admission No</th>
-                        <th>Class</th>
-                        <th>Class Arm</th>
+                        <th>Tên</th>
+                        <th>Họ</th>
+                        <th>Tên khác</th>
+                        <th>Mã sinh viên</th>
+                        <th>Lớp</th>
+                        <th>Phân lớp</th>
                       </tr>
                     </thead>
                     
@@ -139,7 +144,7 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
                       {
                            echo   
                            "<div class='alert alert-danger' role='alert'>
-                            No Record Found!
+                            Không tìm thấy bản ghi nào!
                             </div>";
                       }
                       
@@ -168,7 +173,7 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
         <!---Container Fluid-->
       </div>
       <!-- Footer -->
-       <?php include "Includes/footer.php";?>
+       <?php include 'includes/footer.php';?>
       <!-- Footer -->
     </div>
   </div>
@@ -182,14 +187,13 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
   <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="js/ruang-admin.min.js"></script>
-   <!-- Page level plugins -->
+  <!-- Page level plugins -->
   <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
   <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
   <!-- Page level custom scripts -->
   <script>
     $(document).ready(function () {
-      $('#dataTable').DataTable(); // ID From dataTable 
       $('#dataTableHover').DataTable(); // ID From dataTable with Hover
     });
   </script>

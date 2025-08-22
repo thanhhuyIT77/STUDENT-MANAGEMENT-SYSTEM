@@ -205,7 +205,7 @@ if(isset($_POST['save'])){
                         <input type="text" class="form-control" name="otherName" value="<?php echo isset($row['otherName']) ? $row['otherName'] : '';?>" id="exampleInputFirstName" >
                         </div>
                         <div class="col-xl-6">
-                        <label class="form-control-label">Mã nhập học<span class="text-danger ml-2">*</span></label>
+                        <label class="form-control-label">Số điện thoại<span class="text-danger ml-2">*</span></label>
                       <input type="text" class="form-control" required name="admissionNumber" value="<?php echo isset($row['admissionNumber']) ? $row['admissionNumber'] : '';?>" id="exampleInputFirstName" >
                         </div>
                     </div>
@@ -265,7 +265,7 @@ if(isset($_POST['save'])){
                         <th>Tên</th>
                         <th>Họ</th>
                         <th>Tên đệm</th>
-                        <th>Mã nhập học</th>
+                        <th>Số điện thoại</th>
                         <th>Lớp</th>
                         <th>Phân lớp</th>
                         <th>Ngày tạo</th>

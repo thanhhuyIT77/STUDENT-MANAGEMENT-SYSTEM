@@ -6,6 +6,7 @@ include '../Includes/session.php';
 
 // Initialize variables to prevent undefined variable warnings
 $statusMsg = "";
+$rrw = array();
 
     $query = "SELECT tblclass.className,tblclassarms.classArmName 
     FROM tblclassteacher
@@ -14,7 +15,9 @@ $statusMsg = "";
     Where tblclassteacher.Id = '$_SESSION[userId]'";
     $rs = $conn->query($query);
     $num = $rs->num_rows;
-    $rrw = $rs->fetch_assoc();
+    if($num > 0) {
+        $rrw = $rs->fetch_assoc();
+    }
 
 
 //session and Term
@@ -59,7 +62,7 @@ if(isset($_POST['save'])){
 
   if($count > 0){
 
-      $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Attendance has been taken for today!</div>";
+      $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Điểm danh đã được thực hiện cho hôm nay!</div>";
 
   }
 
@@ -76,11 +79,11 @@ if(isset($_POST['save'])){
 
                       if ($qquery) {
 
-                          $statusMsg = "<div class='alert alert-success'  style='margin-right:700px;'>Attendance Taken Successfully!</div>";
+                          $statusMsg = "<div class='alert alert-success'  style='margin-right:700px;'>Điểm danh thành công!</div>";
                       }
                       else
                       {
-                          $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
+                          $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Đã xảy ra lỗi!</div>";
                       }
                   
                 }
@@ -95,7 +98,7 @@ if(isset($_POST['save'])){
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
   <meta charset="utf-8">
@@ -104,7 +107,7 @@ if(isset($_POST['save'])){
   <meta name="description" content="">
   <meta name="author" content="">
   <link href="img/logo/attnlg.jpg" rel="icon">
-  <title>Dashboard</title>
+  <title>Điểm danh học sinh</title>
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="css/ruang-admin.min.css" rel="stylesheet">
@@ -150,10 +153,10 @@ if(isset($_POST['save'])){
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Thực hiện điểm danh (Hôm nay: <?php echo $todaysDate = date("d-m-Y");?>)</h1>
+            <h1 class="h3 mb-0 text-gray-800">Điểm danh học sinh</h1>
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="./">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">All Student in Class</li>
+              <li class="breadcrumb-item"><a href="./">Trang chủ</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Điểm danh</li>
             </ol>
           </div>
 
@@ -168,7 +171,7 @@ if(isset($_POST['save'])){
               <div class="col-lg-12">
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Tất cả học sinh trong lớp (<?php echo $rrw['className'].' - '.$rrw['classArmName'];?>)</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Tất cả học sinh trong lớp (<?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?> - <?php echo isset($rrw['classArmName']) ? $rrw['classArmName'] : 'N/A'; ?>)</h6>
                   <h6 class="m-0 font-weight-bold text-danger">Lưu ý: <i>Tích vào ô bên cạnh mỗi học sinh để điểm danh!</i></h6>
                 </div>
                 <div class="table-responsive p-3">
@@ -223,7 +226,7 @@ if(isset($_POST['save'])){
                       {
                            echo   
                            "<div class='alert alert-danger' role='alert'>
-                            No Record Found!
+                            Không tìm thấy bản ghi nào!
                             </div>";
                       }
                       

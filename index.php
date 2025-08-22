@@ -14,7 +14,7 @@ session_start();
     <meta name="description" content="">
     <meta name="author" content="">
     <link href="img/logo/attnlg.jpg" rel="icon">
-    <title>Hệ thống điểm danh sinh viên - Đăng nhập</title>
+    <title>Hệ thống quản lí sinh viên - Đăng nhập</title>
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/ruang-admin.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@ session_start();
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="login-form">
-                                    <h5 align="center">HỆ THỐNG ĐIỂM DANH SINH VIÊN</h5>
+                                    <h5 align="center">HỆ THỐNG QUẢN LÝ SINH VIÊN</h5>
                                     <div class="text-center">
                                         <img src="img/logo/attnlg.jpg" style="width:100px;height:100px">
                                         <br><br>
