@@ -3,7 +3,7 @@
        <div class="sidebar-brand-icon" >
          <img src="img/logo/attnlg.jpg">
        </div>
-       <div class="sidebar-brand-text mx-3">Hệ thống điểm danh</div>
+       <div class="sidebar-brand-text mx-3">Hệ thống quản lý sinh viên</div>
      </a>
      <hr class="sidebar-divider my-0">
      <li class="nav-item active">

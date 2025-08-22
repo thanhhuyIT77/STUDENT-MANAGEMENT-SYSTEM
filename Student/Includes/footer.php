@@ -1,7 +1,7 @@
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Hệ thống điểm danh sinh viên 2024</span>
+            <span>Copyright &copy; Hệ thống quản lý sinh viên 2025</span>
           </div>
         </div>
       </footer>
