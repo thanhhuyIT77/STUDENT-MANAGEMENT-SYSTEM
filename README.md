@@ -1,4 +1,4 @@
-# 🎓 Hệ Thống Quản Lý Điểm Danh Sinh Viên
+# 🎓 Hệ Thống Quản Lý  Sinh Viên
 
 [![PHP](https://img.shields.io/badge/PHP-7.4+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
