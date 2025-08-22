@@ -3,17 +3,20 @@
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
+// Initialize variables
+$rrw = array();
 
-    $query = "SELECT tblclass.className,tblclassarms.classArmName 
+// Get class information (simplified without class arms)
+$query = "SELECT tblclass.className 
     FROM tblclassteacher
     INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-    INNER JOIN tblclassarms ON tblclassarms.Id = tblclassteacher.classArmId
     Where tblclassteacher.Id = '$_SESSION[userId]'";
 
-    $rs = $conn->query($query);
-    $num = $rs->num_rows;
+$rs = $conn->query($query);
+$num = $rs->num_rows;
+if($num > 0) {
     $rrw = $rs->fetch_assoc();
-
+}
 
 ?>
 
@@ -97,30 +100,6 @@ $class = mysqli_num_rows($query1);
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-chalkboard fa-2x text-primary"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Class Arm Card -->
-             <?php 
-$query1=mysqli_query($conn,"SELECT * from tblclassarms");                       
-$classArms = mysqli_num_rows($query1);
-?>
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card h-100">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-uppercase mb-1">Phân lớp</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $classArms;?></div>
-                      <div class="mt-2 mb-0 text-muted text-xs">
-                        <!-- <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 12%</span>
-                        <span>Since last years</span> -->
-                      </div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-code-branch fa-2x text-success"></i>
                     </div>
                   </div>
                 </div>

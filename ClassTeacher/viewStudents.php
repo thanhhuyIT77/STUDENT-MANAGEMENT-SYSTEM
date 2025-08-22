@@ -4,20 +4,32 @@ error_reporting(0);
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
-// Initialize variables to prevent undefined variable warnings
+// Initialize variables
+$statusMsg = "";
 $rrw = array();
 
-$query = "SELECT tblclass.className,tblclassarms.classArmName 
+// Get class information
+$query = "SELECT tblclass.className
     FROM tblclassteacher
     INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-    INNER JOIN tblclassarms ON tblclassarms.Id = tblclassteacher.classArmId
     Where tblclassteacher.Id = '$_SESSION[userId]'";
+$rs = $conn->query($query);
+$num = $rs->num_rows;
+if($num > 0) {
+    $rrw = $rs->fetch_assoc();
+}
 
-    $rs = $conn->query($query);
-    $num = $rs->num_rows;
-    if($num > 0) {
-        $rrw = $rs->fetch_assoc();
+// Handle delete
+if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete") {
+    $id = $_GET['Id'];
+    $query = mysqli_query($conn, "DELETE FROM tblstudents WHERE Id = '$id'");
+    
+    if ($query) {
+        $statusMsg = "<div class='alert alert-success'>Xóa sinh viên thành công!</div>";
+    } else {
+        $statusMsg = "<div class='alert alert-danger'>Đã xảy ra lỗi!</div>";
     }
+}
 
 ?>
 
@@ -31,36 +43,10 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
   <meta name="description" content="">
   <meta name="author" content="">
   <link href="img/logo/attnlg.jpg" rel="icon">
-  <title>Danh sách học sinh</title>
+  <title>Tất cả học sinh trong lớp</title>
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="css/ruang-admin.min.css" rel="stylesheet">
-
-
-
-   <script>
-    function classArmDropdown(str) {
-    if (str == "") {
-        document.getElementById("txtHint").innerHTML = "";
-        return;
-    } else { 
-        if (window.XMLHttpRequest) {
-            // code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {
-            // code for IE6, IE5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("txtHint").innerHTML = this.responseText;
-            }
-        };
-        xmlhttp.open("GET","ajaxClassArms2.php?cid="+str,true);
-        xmlhttp.send();
-    }
-}
-</script>
 </head>
 
 <body id="page-top">
@@ -77,103 +63,80 @@ $query = "SELECT tblclass.className,tblclassarms.classArmName
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Tất cả học sinh trong lớp (<?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?> - <?php echo isset($rrw['classArmName']) ? $rrw['classArmName'] : 'N/A'; ?>)</h1>
+            <h1 class="h3 mb-0 text-gray-800">Tất cả học sinh trong lớp (<?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?>)</h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="./">Trang chủ</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Danh sách học sinh</li>
+              <li class="breadcrumb-item active" aria-current="page">Xem học sinh</li>
             </ol>
           </div>
 
+          <?php echo $statusMsg; ?>
+
+          <!-- Input Group -->
           <div class="row">
             <div class="col-lg-12">
-              <!-- Form Basic -->
-
-
-              <!-- Input Group -->
-                 <div class="row">
-              <div class="col-lg-12">
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Tất cả học sinh trong lớp</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Danh sách học sinh</h6>
                 </div>
                 <div class="table-responsive p-3">
                   <table class="table align-items-center table-flush table-hover" id="dataTableHover">
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
-                        <th>Tên</th>
-                        <th>Họ</th>
+                        <th>Họ và tên</th>
                         <th>Tên khác</th>
                         <th>Mã sinh viên</th>
                         <th>Lớp</th>
-                        <th>Phân lớp</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
                       </tr>
                     </thead>
-                    
                     <tbody>
-
-                  <?php
-                      $query = "SELECT tblstudents.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblstudents.firstName,
+                      <?php
+                      $query = "SELECT tblstudents.Id,tblclass.className,tblstudents.firstName,
                       tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber,tblstudents.dateCreated
                       FROM tblstudents
                       INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classArmId
-                      where tblstudents.classId = '$_SESSION[classId]' and tblstudents.classArmId = '$_SESSION[classArmId]'";
+                      WHERE tblstudents.classId = '$_SESSION[classId]'
+                      ORDER BY tblstudents.firstName, tblstudents.lastName";
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
-                      $sn=0;
-                      $status="";
-                      if($num > 0)
-                      { 
-                        while ($rows = $rs->fetch_assoc())
-                          {
-                             $sn = $sn + 1;
-                            echo"
-                              <tr>
-                                <td>".$sn."</td>
-                                <td>".$rows['firstName']."</td>
-                                <td>".$rows['lastName']."</td>
-                                <td>".$rows['otherName']."</td>
-                                <td>".$rows['admissionNumber']."</td>
-                                <td>".$rows['className']."</td>
-                                <td>".$rows['classArmName']."</td>
-                              </tr>";
-                          }
+                      $sn = 0;
+                      if($num > 0) { 
+                        while ($rows = $rs->fetch_assoc()) {
+                          $sn = $sn + 1;
+                          echo "<tr>
+                                  <td>".$sn."</td>
+                                  <td>".$rows['firstName']." ".$rows['lastName']."</td>
+                                  <td>".$rows['otherName']."</td>
+                                  <td>".$rows['admissionNumber']."</td>
+                                  <td>".$rows['className']."</td>
+                                  <td>".$rows['dateCreated']."</td>
+                                  <td>
+                                    <a href='viewStudents.php?Id=".$rows['Id']."&action=delete' class='btn btn-sm btn-danger' onclick='return confirm(\"Bạn có chắc muốn xóa sinh viên này?\")'>
+                                      <i class='fas fa-trash'></i> Xóa
+                                    </a>
+                                  </td>
+                                </tr>";
+                        }
+                      } else {
+                        echo "<tr><td colspan='7' class='text-center'>Không có dữ liệu</td></tr>";
                       }
-                      else
-                      {
-                           echo   
-                           "<div class='alert alert-danger' role='alert'>
-                            Không tìm thấy bản ghi nào!
-                            </div>";
-                      }
-                      
                       ?>
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
-            </div>
           </div>
           <!--Row-->
-
-          <!-- Documentation Link -->
-          <!-- <div class="row">
-            <div class="col-lg-12 text-center">
-              <p>For more documentations you can visit<a href="https://getbootstrap.com/docs/4.3/components/forms/"
-                  target="_blank">
-                  bootstrap forms documentations.</a> and <a
-                  href="https://getbootstrap.com/docs/4.3/components/input-group/" target="_blank">bootstrap input
-                  groups documentations</a></p>
-            </div>
-          </div> -->
 
         </div>
         <!---Container Fluid-->
       </div>
       <!-- Footer -->
-       <?php include 'includes/footer.php';?>
+       <?php include "Includes/footer.php";?>
       <!-- Footer -->
     </div>
   </div>

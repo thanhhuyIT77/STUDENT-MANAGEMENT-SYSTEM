@@ -42,7 +42,7 @@ session_start();
                                             <select required name="userType" class="form-control mb-3" id="userTypeSelect">
                                                 <option value="">--Chọn vai trò--</option>
                                                 <option value="Administrator">Quản trị viên</option>
-                                                <option value="ClassTeacher">Giáo viên chủ nhiệm</option>
+                                                <option value="ClassTeacher">Giảng viên</option>
                                                 <option value="Student">Sinh viên</option>
                                             </select>
                                         </div>

@@ -13,7 +13,7 @@
      </li>
      <hr class="sidebar-divider">
      <div class="sidebar-heading">
-         Lớp và Phân lớp
+         Lớp học
      </div>
      <li class="nav-item">
          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap" aria-expanded="true" aria-controls="collapseBootstrap">
@@ -25,19 +25,6 @@
                  <h6 class="collapse-header">Quản lý lớp</h6>
                  <a class="collapse-item" href="createClass.php">Tạo lớp</a>
                  <!-- <a class="collapse-item" href="#">Member List</a> -->
-             </div>
-         </div>
-     </li>
-     <li class="nav-item">
-         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrapusers" aria-expanded="true" aria-controls="collapseBootstrapusers">
-             <i class="fas fa-code-branch"></i>
-             <span>Quản lý phân lớp</span>
-         </a>
-         <div id="collapseBootstrapusers" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
-             <div class="bg-white py-2 collapse-inner rounded">
-                 <h6 class="collapse-header">Quản lý phân lớp</h6>
-                 <a class="collapse-item" href="createClassArms.php">Tạo phân lớp</a>
-                 <!-- <a class="collapse-item" href="usersList.php">User List</a> -->
              </div>
          </div>
      </li>
@@ -93,6 +80,22 @@
          </div>
      </li>
 
+     <hr class="sidebar-divider">
+     <div class="sidebar-heading">
+         Môn học
+     </div>
+     <li class="nav-item">
+         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSubjects" aria-expanded="true" aria-controls="collapseSubjects">
+             <i class="fas fa-book"></i>
+             <span>Quản lý môn học</span>
+         </a>
+         <div id="collapseSubjects" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+             <div class="bg-white py-2 collapse-inner rounded">
+                 <h6 class="collapse-header">Quản lý môn học</h6>
+                 <a class="collapse-item" href="manageSubjects.php">Quản lý môn học</a>
+             </div>
+         </div>
+     </li>
      <hr class="sidebar-divider">
      <div class="sidebar-heading">
          Năm học & Học kỳ

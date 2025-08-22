@@ -52,6 +52,23 @@
           </div>
         </div>
       </li>
+      <hr class="sidebar-divider">
+      <div class="sidebar-heading">
+        Điểm số
+      </div>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGrades"
+          aria-expanded="true" aria-controls="collapseGrades">
+          <i class="fas fa-chart-line"></i>
+          <span>Quản lý điểm số</span>
+        </a>
+        <div id="collapseGrades" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Quản lý điểm số</h6>
+            <a class="collapse-item" href="manageGrades.php">Nhập và xem điểm</a>
+          </div>
+        </div>
+      </li>
 
      
       <!-- <li class="nav-item">

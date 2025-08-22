@@ -4,138 +4,82 @@ error_reporting(0);
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
-// Initialize variables to prevent undefined variable warnings
+// Initialize variables
 $statusMsg = "";
 $row = array();
 
-//------------------------SAVE--------------------------------------------------
-
+// Handle form submissions
 if(isset($_POST['save'])){
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $emailAddress = $_POST['emailAddress'];
+    $password = $_POST['password'];
+    $phoneNo = $_POST['phoneNo'];
+    $classId = $_POST['classId'];
+    $dateCreated = date("Y-m-d");
     
-    $firstName=$_POST['firstName'];
-  $lastName=$_POST['lastName'];
-  $emailAddress=$_POST['emailAddress'];
-
-  $phoneNo=$_POST['phoneNo'];
-  $classId=$_POST['classId'];
-  $classArmId=$_POST['classArmId'];
-  $dateCreated = date("Y-m-d");
-   
-    $query=mysqli_query($conn,"select * from tblclassteacher where emailAddress ='$emailAddress'");
-    $ret=mysqli_fetch_array($query);
-
-    $sampPass = "pass123";
-    $sampPass_2 = md5($sampPass);
-
+    // Check if email already exists
+    $query = mysqli_query($conn, "SELECT * FROM tblclassteacher WHERE emailAddress = '$emailAddress'");
+    $ret = mysqli_fetch_array($query);
+    
     if($ret > 0){ 
-
-        $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Địa chỉ email này đã tồn tại!</div>";
-    }
-    else{
-
-    $query=mysqli_query($conn,"INSERT into tblclassteacher(firstName,lastName,emailAddress,password,phoneNo,classId,classArmId,dateCreated) 
-    value('$firstName','$lastName','$emailAddress','$sampPass_2','$phoneNo','$classId','$classArmId','$dateCreated')");
-
-    if ($query) {
+        $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Email này đã tồn tại!</div>";
+    } else {
+        $query = mysqli_query($conn, "INSERT INTO tblclassteacher(firstName, lastName, emailAddress, password, phoneNo, classId, dateCreated) 
+        VALUES('$firstName','$lastName','$emailAddress','$password','$phoneNo','$classId','$dateCreated')");
         
-        $qu=mysqli_query($conn,"update tblclassarms set isAssigned='1' where Id ='$classArmId'");
-            if ($qu) {
-                
-                $statusMsg = "<div class='alert alert-success'  style='margin-right:700px;'>Tạo thành công!</div>";
-            }
-            else
-            {
-                $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Đã xảy ra lỗi!</div>";
-            }
+        if ($query) {
+            $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Tạo giáo viên thành công!</div>";
+        } else {
+            $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Đã xảy ra lỗi!</div>";
+        }
     }
-    else
-    {
-         $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Đã xảy ra lỗi!</div>";
-    }
-  }
 }
 
-//---------------------------------------EDIT-------------------------------------------------------------
+// Handle edit
+if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "edit") {
+    $id = $_GET['Id'];
+    $query = mysqli_query($conn, "SELECT * FROM tblclassteacher WHERE Id = '$id'");
+    $row = mysqli_fetch_array($query);
+}
 
-
-
-
-
-
-//--------------------EDIT------------------------------------------------------------
-
- if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "edit")
-	{
-        $Id= $_GET['Id'];
-
-        $query=mysqli_query($conn,"select * from tblclassteacher where Id ='$Id'");
-        $row=mysqli_fetch_array($query);
-
-        //------------UPDATE-----------------------------
-
-        if(isset($_POST['update'])){
+// Handle update
+if(isset($_POST['update'])){
+    $id = $_POST['id'];
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $emailAddress = $_POST['emailAddress'];
+    $password = $_POST['password'];
+    $phoneNo = $_POST['phoneNo'];
+    $classId = $_POST['classId'];
     
-             $firstName=$_POST['firstName'];
-              $lastName=$_POST['lastName'];
-              $emailAddress=$_POST['emailAddress'];
-
-              $phoneNo=$_POST['phoneNo'];
-              $classId=$_POST['classId'];
-              $classArmId=$_POST['classArmId'];
-              $dateCreated = date("Y-m-d");
-
-    $query=mysqli_query($conn,"update tblclassteacher set firstName='$firstName', lastName='$lastName',
-    emailAddress='$emailAddress', password='$password',phoneNo='$phoneNo', classId='$classId',classArmId='$classArmId'
-    where Id='$Id'");
-            if ($query) {
-                
-                echo "<script type = \"text/javascript\">
-                window.location = (\"createClassTeacher.php\")
-                </script>"; 
-            }
-            else
-            {
-                $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Đã xảy ra lỗi!</div>";
-            }
-        }
+    $query = mysqli_query($conn, "UPDATE tblclassteacher SET firstName='$firstName', lastName='$lastName', 
+    emailAddress='$emailAddress', password='$password', phoneNo='$phoneNo', classId='$classId' WHERE Id = '$id'");
+    
+    if ($query) {
+        $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Cập nhật thành công!</div>";
+        $row = array(); // Clear form
+    } else {
+        $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Đã xảy ra lỗi!</div>";
     }
+}
 
-
-//--------------------------------DELETE------------------------------------------------------------------
-
-  if (isset($_GET['Id']) && isset($_GET['classArmId']) && isset($_GET['action']) && $_GET['action'] == "delete")
-	{
-        $Id= $_GET['Id'];
-        $classArmId= $_GET['classArmId'];
-
-        $query = mysqli_query($conn,"DELETE FROM tblclassteacher WHERE Id='$Id'");
-
-        if ($query == TRUE) {
-
-            $qu=mysqli_query($conn,"update tblclassarms set isAssigned='0' where Id ='$classArmId'");
-            if ($qu) {
-                
-                 echo "<script type = \"text/javascript\">
-                window.location = (\"createClassTeacher.php\")
-                </script>"; 
-            }
-            else
-            {
-                $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
-            }
-        }
-        else{
-
-            $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>"; 
-         }
-      
-  }
-
+// Handle delete
+if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete") {
+    $id = $_GET['Id'];
+    $query = mysqli_query($conn, "DELETE FROM tblclassteacher WHERE Id = '$id'");
+    
+    if ($query) {
+        $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Xóa giáo viên thành công!</div>";
+    } else {
+        $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Đã xảy ra lỗi!</div>";
+    }
+}
 
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
   <meta charset="utf-8">
@@ -144,36 +88,10 @@ if(isset($_POST['save'])){
   <meta name="description" content="">
   <meta name="author" content="">
   <link href="img/logo/attnlg.jpg" rel="icon">
-<?php include 'includes/title.php';?>
+  <title>Tạo giáo viên chủ nhiệm</title>
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="css/ruang-admin.min.css" rel="stylesheet">
-
-
-
-   <script>
-    function classArmDropdown(str) {
-    if (str == "") {
-        document.getElementById("txtHint").innerHTML = "";
-        return;
-    } else { 
-        if (window.XMLHttpRequest) {
-            // code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {
-            // code for IE6, IE5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("txtHint").innerHTML = this.responseText;
-            }
-        };
-        xmlhttp.open("GET","ajaxClassArms.php?cid="+str,true);
-        xmlhttp.send();
-    }
-}
-</script>
 </head>
 
 <body id="page-top">
@@ -193,7 +111,7 @@ if(isset($_POST['save'])){
             <h1 class="h3 mb-0 text-gray-800">Tạo giáo viên chủ nhiệm</h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="./">Trang chủ</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Tạo giáo viên chủ nhiệm</li>
+              <li class="breadcrumb-item active" aria-current="page">Tạo giáo viên</li>
             </ol>
           </div>
 
@@ -202,75 +120,74 @@ if(isset($_POST['save'])){
               <!-- Form Basic -->
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Tạo giáo viên chủ nhiệm</h6>
-                    <?php echo $statusMsg; ?>
+                  <h6 class="m-0 font-weight-bold text-primary"><?php echo isset($row['Id']) ? 'Cập nhật giáo viên' : 'Thêm giáo viên mới'; ?></h6>
                 </div>
                 <div class="card-body">
+                  <?php echo $statusMsg; ?>
                   <form method="post">
-                   <div class="form-group row mb-3">
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Tên<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" required name="firstName" value="<?php echo isset($row['firstName']) ? $row['firstName'] : '';?>" id="exampleInputFirstName">
-                        </div>
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Họ<span class="text-danger ml-2">*</span></label>
-                      <input type="text" class="form-control" required name="lastName" value="<?php echo isset($row['lastName']) ? $row['lastName'] : '';?>" id="exampleInputFirstName" >
-                        </div>
-                    </div>
-                     <div class="form-group row mb-3">
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Email<span class="text-danger ml-2">*</span></label>
-                        <input type="email" class="form-control" required name="emailAddress" value="<?php echo isset($row['emailAddress']) ? $row['emailAddress'] : '';?>" id="exampleInputFirstName" >
-                        </div>
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Số điện thoại<span class="text-danger ml-2">*</span></label>
-                      <input type="text" class="form-control" name="phoneNo" value="<?php echo isset($row['phoneNo']) ? $row['phoneNo'] : '';?>" id="exampleInputFirstName" >
-                        </div>
-                    </div>
+                    <?php if(isset($row['Id'])): ?>
+                      <input type="hidden" name="id" value="<?php echo $row['Id']; ?>">
+                    <?php endif; ?>
+                    
                     <div class="form-group row mb-3">
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Chọn lớp<span class="text-danger ml-2">*</span></label>
-                         <?php
-                        $qry= "SELECT * FROM tblclass ORDER BY className ASC";
-                        $result = $conn->query($qry);
-                        $num = $result->num_rows;		
-                        if ($num > 0){
-                          echo ' <select required name="classId" onchange="classArmDropdown(this.value)" class="form-control mb-3">';
-                          echo'<option value="">--Chọn lớp--</option>';
-                          while ($rows = $result->fetch_assoc()){
-                          echo'<option value="'.$rows['Id'].'" >'.$rows['className'].'</option>';
-                              }
-                                  echo '</select>';
-                              }
-                            ?>  
-                        </div>
-                        <div class="col-xl-6">
-                        <label class="form-control-label">Phân lớp<span class="text-danger ml-2">*</span></label>
-                            <?php
-                                echo"<div id='txtHint'></div>";
-                            ?>
-                        </div>
+                      <div class="col-xl-6">
+                        <label class="form-control-label">Họ<span class="text-danger ml-2">*</span></label>
+                        <input type="text" class="form-control" name="firstName" value="<?php echo isset($row['firstName']) ? $row['firstName'] : ''; ?>" required>
+                      </div>
+                      <div class="col-xl-6">
+                        <label class="form-control-label">Tên<span class="text-danger ml-2">*</span></label>
+                        <input type="text" class="form-control" name="lastName" value="<?php echo isset($row['lastName']) ? $row['lastName'] : ''; ?>" required>
+                      </div>
                     </div>
-                      <?php
-                    if (isset($Id))
-                    {
-                    ?>
-                    <button type="submit" name="update" class="btn btn-warning">Cập nhật</button>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <?php
-                    } else {           
-                    ?>
-                    <button type="submit" name="save" class="btn btn-primary">Lưu</button>
-                    <?php
-                    }         
-                    ?>
+                    
+                    <div class="form-group row mb-3">
+                      <div class="col-xl-6">
+                        <label class="form-control-label">Email<span class="text-danger ml-2">*</span></label>
+                        <input type="email" class="form-control" name="emailAddress" value="<?php echo isset($row['emailAddress']) ? $row['emailAddress'] : ''; ?>" required>
+                      </div>
+                      <div class="col-xl-6">
+                        <label class="form-control-label">Mật khẩu<span class="text-danger ml-2">*</span></label>
+                        <input type="password" class="form-control" name="password" value="<?php echo isset($row['password']) ? $row['password'] : ''; ?>" required>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group row mb-3">
+                      <div class="col-xl-6">
+                        <label class="form-control-label">Số điện thoại<span class="text-danger ml-2">*</span></label>
+                        <input type="text" class="form-control" name="phoneNo" value="<?php echo isset($row['phoneNo']) ? $row['phoneNo'] : ''; ?>" required>
+                      </div>
+                      <div class="col-xl-6">
+                        <label class="form-control-label">Lớp<span class="text-danger ml-2">*</span></label>
+                        <select class="form-control" name="classId" required>
+                          <option value="">Chọn lớp</option>
+                          <?php
+                          $query = "SELECT * FROM tblclass ORDER BY className";
+                          $rs = $conn->query($query);
+                          while ($rows = $rs->fetch_assoc()) {
+                            $selected = (isset($row['classId']) && $row['classId'] == $rows['Id']) ? 'selected' : '';
+                            echo "<option value='".$rows['Id']."' ".$selected.">".$rows['className']."</option>";
+                          }
+                          ?>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <button type="submit" name="<?php echo isset($row['Id']) ? 'update' : 'save'; ?>" class="btn btn-primary">
+                      <?php echo isset($row['Id']) ? 'Cập nhật' : 'Lưu'; ?>
+                    </button>
+                    
+                    <?php if(isset($row['Id'])): ?>
+                      <a href="createClassTeacher.php" class="btn btn-secondary">Hủy</a>
+                    <?php endif; ?>
                   </form>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <!-- Input Group -->
-                 <div class="row">
-              <div class="col-lg-12">
+          <!-- Input Group -->
+          <div class="row">
+            <div class="col-lg-12">
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">Danh sách giáo viên chủ nhiệm</h6>
@@ -280,76 +197,55 @@ if(isset($_POST['save'])){
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
-                        <th>Tên</th>
-                        <th>Họ</th>
+                        <th>Họ và tên</th>
                         <th>Email</th>
-                        <th>SĐT</th>
+                        <th>Số điện thoại</th>
                         <th>Lớp</th>
-                        <th>Phân lớp</th>
                         <th>Ngày tạo</th>
-                        <th>Xóa</th>
+                        <th>Thao tác</th>
                       </tr>
                     </thead>
-                   
                     <tbody>
-
-                  <?php
-                      $query = "SELECT tblclassteacher.Id,tblclass.className,tblclassarms.classArmName,tblclassarms.Id AS classArmId,tblclassteacher.firstName,
+                      <?php
+                      $query = "SELECT tblclassteacher.Id,tblclass.className,tblclassteacher.firstName,
                       tblclassteacher.lastName,tblclassteacher.emailAddress,tblclassteacher.phoneNo,tblclassteacher.dateCreated
                       FROM tblclassteacher
                       INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblclassteacher.classArmId";
+                      ORDER BY tblclassteacher.firstName, tblclassteacher.lastName";
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
-                      $sn=0;
-                      $status="";
-                      if($num > 0)
-                      { 
-                        while ($rows = $rs->fetch_assoc())
-                          {
-                             $sn = $sn + 1;
-                            echo"
-                              <tr>
-                                <td>".$sn."</td>
-                                <td>".$rows['firstName']."</td>
-                                <td>".$rows['lastName']."</td>
-                                <td>".$rows['emailAddress']."</td>
-                                <td>".$rows['phoneNo']."</td>
-                                <td>".$rows['className']."</td>
-                                <td>".$rows['classArmName']."</td>
-                                 <td>".$rows['dateCreated']."</td>
-                                <td><a href='?action=delete&Id=".$rows['Id']."&classArmId=".$rows['classArmId']."'><i class='fas fa-fw fa-trash'></i></a></td>
-                              </tr>";
-                          }
+                      $sn = 0;
+                      if($num > 0) { 
+                        while ($rows = $rs->fetch_assoc()) {
+                          $sn = $sn + 1;
+                          echo "<tr>
+                                  <td>".$sn."</td>
+                                  <td>".$rows['firstName']." ".$rows['lastName']."</td>
+                                  <td>".$rows['emailAddress']."</td>
+                                  <td>".$rows['phoneNo']."</td>
+                                  <td>".$rows['className']."</td>
+                                  <td>".$rows['dateCreated']."</td>
+                                  <td>
+                                    <a href='createClassTeacher.php?Id=".$rows['Id']."&action=edit' class='btn btn-sm btn-primary'>
+                                      <i class='fas fa-edit'></i> Sửa
+                                    </a>
+                                    <a href='createClassTeacher.php?Id=".$rows['Id']."&action=delete' class='btn btn-sm btn-danger' onclick='return confirm(\"Bạn có chắc muốn xóa giáo viên này?\")'>
+                                      <i class='fas fa-trash'></i> Xóa
+                                    </a>
+                                  </td>
+                                </tr>";
+                        }
+                      } else {
+                        echo "<tr><td colspan='7' class='text-center'>Không có dữ liệu</td></tr>";
                       }
-                      else
-                      {
-                           echo   
-                           "<div class='alert alert-danger' role='alert'>
-                            No Record Found!
-                            </div>";
-                      }
-                      
                       ?>
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
-            </div>
           </div>
           <!--Row-->
-
-          <!-- Documentation Link -->
-          <!-- <div class="row">
-            <div class="col-lg-12 text-center">
-              <p>For more documentations you can visit<a href="https://getbootstrap.com/docs/4.3/components/forms/"
-                  target="_blank">
-                  bootstrap forms documentations.</a> and <a
-                  href="https://getbootstrap.com/docs/4.3/components/input-group/" target="_blank">bootstrap input
-                  groups documentations</a></p>
-            </div>
-          </div> -->
 
         </div>
         <!---Container Fluid-->
@@ -369,14 +265,13 @@ if(isset($_POST['save'])){
   <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="js/ruang-admin.min.js"></script>
-   <!-- Page level plugins -->
+  <!-- Page level plugins -->
   <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
   <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
   <!-- Page level custom scripts -->
   <script>
     $(document).ready(function () {
-      $('#dataTable').DataTable(); // ID From dataTable 
       $('#dataTableHover').DataTable(); // ID From dataTable with Hover
     });
   </script>

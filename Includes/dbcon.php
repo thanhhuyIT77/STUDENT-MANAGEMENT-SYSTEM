@@ -3,14 +3,14 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 $host = "localhost";
-$user = "root";
-$pass = "";
-$db = "qlsinhvien";
+$username = "root";
+$password = "";
 $port = 3307;
+$db = "qlsinhvien2";
 
-$conn = new mysqli($host, $user, $pass, $db, $port);
+$conn = new mysqli($host, $username, $password, $db, $port);
+
 if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
-
 ?>

@@ -3,13 +3,15 @@ include '../Includes/dbcon.php';
 include 'Includes/session.php';
 
 // Get student information
-$query = "SELECT tblstudents.*, tblclass.className, tblclassarms.classArmName 
+$query = "SELECT tblstudents.*, tblclass.className
           FROM tblstudents 
           INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-          INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classArmId
           WHERE tblstudents.Id = '$_SESSION[userId]'";
 $rs = $conn->query($query);
-$studentInfo = $rs->fetch_assoc();
+$num = $rs->num_rows;
+if($num > 0) {
+    $rrw = $rs->fetch_assoc();
+}
 
 // Get attendance statistics
 $query = "SELECT COUNT(*) as totalAttendance FROM tblattendance WHERE admissionNo = '$_SESSION[admissionNumber]'";
@@ -74,13 +76,12 @@ $attendanceRate = $totalAttendance > 0 ? round(($presentDays / $totalAttendance)
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-6">
-                      <p><strong>Họ và tên:</strong> <?php echo $studentInfo['firstName'] . ' ' . $studentInfo['lastName'] . ' ' . $studentInfo['otherName']; ?></p>
-                      <p><strong>Mã sinh viên:</strong> <?php echo $studentInfo['admissionNumber']; ?></p>
-                      <p><strong>Lớp:</strong> <?php echo $studentInfo['className']; ?></p>
+                      <p><strong>Họ và tên:</strong> <?php echo isset($rrw['firstName']) ? $rrw['firstName'] . ' ' . $rrw['lastName'] . ' ' . $rrw['otherName'] : 'N/A'; ?></p>
+                      <p><strong>Mã sinh viên:</strong> <?php echo isset($rrw['admissionNumber']) ? $rrw['admissionNumber'] : 'N/A'; ?></p>
+                      <p><strong>Lớp:</strong> <?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?></p>
                     </div>
                     <div class="col-md-6">
-                      <p><strong>Phân lớp:</strong> <?php echo $studentInfo['classArmName']; ?></p>
-                      <p><strong>Ngày tạo:</strong> <?php echo $studentInfo['dateCreated']; ?></p>
+                      <p><strong>Ngày tạo:</strong> <?php echo isset($rrw['dateCreated']) ? $rrw['dateCreated'] : 'N/A'; ?></p>
                     </div>
                   </div>
                 </div>

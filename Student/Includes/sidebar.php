@@ -44,12 +44,29 @@
          <div class="bg-white py-2 collapse-inner rounded">
            <h6 class="collapse-header">Xem điểm danh</h6>
            <a class="collapse-item" href="viewMyAttendance.php">Xem điểm danh của tôi</a>
-           <a class="collapse-item" href="viewAttendanceReport.php">Báo cáo điểm danh</a>
-         </div>
-       </div>
-     </li>
+                       <a class="collapse-item" href="viewAttendanceReport.php">Báo cáo điểm danh</a>
+          </div>
+        </div>
+      </li>
+      <hr class="sidebar-divider">
+      <div class="sidebar-heading">
+        Điểm số
+      </div>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGrades"
+          aria-expanded="true" aria-controls="collapseGrades">
+          <i class="fas fa-chart-line"></i>
+          <span>Xem điểm số</span>
+        </a>
+        <div id="collapseGrades" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Xem điểm số</h6>
+            <a class="collapse-item" href="viewMyGrades.php">Điểm số của tôi</a>
+          </div>
+        </div>
+      </li>
 
-    
-     <hr class="sidebar-divider">
-    
-     </ul>
+     
+      <hr class="sidebar-divider">
+      
+      </ul>

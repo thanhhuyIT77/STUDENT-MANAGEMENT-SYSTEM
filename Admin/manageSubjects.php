@@ -1,4 +1,3 @@
-
 <?php 
 error_reporting(0);
 include '../Includes/dbcon.php';
@@ -10,26 +9,23 @@ $row = array();
 
 // Handle form submissions
 if(isset($_POST['save'])){
-    $firstName = $_POST['firstName'];
-    $lastName = $_POST['lastName'];
-    $otherName = $_POST['otherName'];
-    $admissionNumber = $_POST['admissionNumber'];
-    $password = $_POST['password'];
-    $classId = $_POST['classId'];
+    $subjectName = $_POST['subjectName'];
+    $subjectCode = $_POST['subjectCode'];
+    $credits = $_POST['credits'];
     $dateCreated = date("Y-m-d");
     
-    // Check if admission number already exists
-    $query = mysqli_query($conn, "SELECT * FROM tblstudents WHERE admissionNumber = '$admissionNumber'");
+    // Check if subject code already exists
+    $query = mysqli_query($conn, "SELECT * FROM tblsubjects WHERE subjectCode = '$subjectCode'");
     $ret = mysqli_fetch_array($query);
     
     if($ret > 0){ 
-        $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Mã sinh viên này đã tồn tại!</div>";
+        $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Mã môn học này đã tồn tại!</div>";
     } else {
-        $query = mysqli_query($conn, "INSERT INTO tblstudents(firstName, lastName, otherName, admissionNumber, password, classId, dateCreated) 
-        VALUES('$firstName','$lastName','$otherName','$admissionNumber','$password','$classId','$dateCreated')");
+        $query = mysqli_query($conn, "INSERT INTO tblsubjects(subjectName, subjectCode, credits, dateCreated) 
+        VALUES('$subjectName','$subjectCode','$credits','$dateCreated')");
         
         if ($query) {
-            $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Tạo sinh viên thành công!</div>";
+            $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Tạo môn học thành công!</div>";
         } else {
             $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Đã xảy ra lỗi!</div>";
         }
@@ -39,22 +35,19 @@ if(isset($_POST['save'])){
 // Handle edit
 if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "edit") {
     $id = $_GET['Id'];
-    $query = mysqli_query($conn, "SELECT * FROM tblstudents WHERE Id = '$id'");
+    $query = mysqli_query($conn, "SELECT * FROM tblsubjects WHERE Id = '$id'");
     $row = mysqli_fetch_array($query);
 }
 
 // Handle update
 if(isset($_POST['update'])){
     $id = $_POST['id'];
-    $firstName = $_POST['firstName'];
-    $lastName = $_POST['lastName'];
-    $otherName = $_POST['otherName'];
-    $admissionNumber = $_POST['admissionNumber'];
-    $password = $_POST['password'];
-    $classId = $_POST['classId'];
+    $subjectName = $_POST['subjectName'];
+    $subjectCode = $_POST['subjectCode'];
+    $credits = $_POST['credits'];
     
-    $query = mysqli_query($conn, "UPDATE tblstudents SET firstName='$firstName', lastName='$lastName', 
-    otherName='$otherName', admissionNumber='$admissionNumber', password='$password', classId='$classId' WHERE Id = '$id'");
+    $query = mysqli_query($conn, "UPDATE tblsubjects SET subjectName='$subjectName', subjectCode='$subjectCode', 
+    credits='$credits' WHERE Id = '$id'");
     
     if ($query) {
         $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Cập nhật thành công!</div>";
@@ -67,10 +60,10 @@ if(isset($_POST['update'])){
 // Handle delete
 if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete") {
     $id = $_GET['Id'];
-    $query = mysqli_query($conn, "DELETE FROM tblstudents WHERE Id = '$id'");
+    $query = mysqli_query($conn, "DELETE FROM tblsubjects WHERE Id = '$id'");
     
     if ($query) {
-        $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Xóa sinh viên thành công!</div>";
+        $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Xóa môn học thành công!</div>";
     } else {
         $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Đã xảy ra lỗi!</div>";
     }
@@ -88,7 +81,7 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
   <meta name="description" content="">
   <meta name="author" content="">
   <link href="img/logo/attnlg.jpg" rel="icon">
-  <title>Tạo sinh viên</title>
+  <title>Quản lý môn học</title>
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="css/ruang-admin.min.css" rel="stylesheet">
@@ -108,10 +101,10 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Tạo sinh viên</h1>
+            <h1 class="h3 mb-0 text-gray-800">Quản lý môn học</h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="./">Trang chủ</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Tạo sinh viên</li>
+              <li class="breadcrumb-item active" aria-current="page">Quản lý môn học</li>
             </ol>
           </div>
 
@@ -120,7 +113,7 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
               <!-- Form Basic -->
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary"><?php echo isset($row['Id']) ? 'Cập nhật sinh viên' : 'Thêm sinh viên mới'; ?></h6>
+                  <h6 class="m-0 font-weight-bold text-primary"><?php echo isset($row['Id']) ? 'Cập nhật môn học' : 'Thêm môn học mới'; ?></h6>
                 </div>
                 <div class="card-body">
                   <?php echo $statusMsg; ?>
@@ -131,44 +124,19 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
                     
                     <div class="form-group row mb-3">
                       <div class="col-xl-6">
-                        <label class="form-control-label">Họ<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" name="firstName" value="<?php echo isset($row['firstName']) ? $row['firstName'] : ''; ?>" required>
+                        <label class="form-control-label">Tên môn học<span class="text-danger ml-2">*</span></label>
+                        <input type="text" class="form-control" name="subjectName" value="<?php echo isset($row['subjectName']) ? $row['subjectName'] : ''; ?>" required>
                       </div>
                       <div class="col-xl-6">
-                        <label class="form-control-label">Tên<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" name="lastName" value="<?php echo isset($row['lastName']) ? $row['lastName'] : ''; ?>" required>
-                      </div>
-                    </div>
-                    
-                    <div class="form-group row mb-3">
-                      <div class="col-xl-6">
-                        <label class="form-control-label">Tên khác</label>
-                        <input type="text" class="form-control" name="otherName" value="<?php echo isset($row['otherName']) ? $row['otherName'] : ''; ?>">
-                      </div>
-                      <div class="col-xl-6">
-                        <label class="form-control-label">Mã sinh viên<span class="text-danger ml-2">*</span></label>
-                        <input type="text" class="form-control" name="admissionNumber" value="<?php echo isset($row['admissionNumber']) ? $row['admissionNumber'] : ''; ?>" required>
+                        <label class="form-control-label">Mã môn học<span class="text-danger ml-2">*</span></label>
+                        <input type="text" class="form-control" name="subjectCode" value="<?php echo isset($row['subjectCode']) ? $row['subjectCode'] : ''; ?>" required>
                       </div>
                     </div>
                     
                     <div class="form-group row mb-3">
                       <div class="col-xl-6">
-                        <label class="form-control-label">Mật khẩu<span class="text-danger ml-2">*</span></label>
-                        <input type="password" class="form-control" name="password" value="<?php echo isset($row['password']) ? $row['password'] : ''; ?>" required>
-                      </div>
-                      <div class="col-xl-6">
-                        <label class="form-control-label">Lớp<span class="text-danger ml-2">*</span></label>
-                        <select class="form-control" name="classId" required>
-                          <option value="">Chọn lớp</option>
-                          <?php
-                          $query = "SELECT * FROM tblclass ORDER BY className";
-                          $rs = $conn->query($query);
-                          while ($rows = $rs->fetch_assoc()) {
-                            $selected = (isset($row['classId']) && $row['classId'] == $rows['Id']) ? 'selected' : '';
-                            echo "<option value='".$rows['Id']."' ".$selected.">".$rows['className']."</option>";
-                          }
-                          ?>
-                        </select>
+                        <label class="form-control-label">Số tín chỉ</label>
+                        <input type="number" class="form-control" name="credits" value="<?php echo isset($row['credits']) ? $row['credits'] : '3'; ?>" min="1" max="10">
                       </div>
                     </div>
                     
@@ -177,7 +145,7 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
                     </button>
                     
                     <?php if(isset($row['Id'])): ?>
-                      <a href="createStudents.php" class="btn btn-secondary">Hủy</a>
+                      <a href="manageSubjects.php" class="btn btn-secondary">Hủy</a>
                     <?php endif; ?>
                   </form>
                 </div>
@@ -190,28 +158,23 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
             <div class="col-lg-12">
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Danh sách sinh viên</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Danh sách môn học</h6>
                 </div>
                 <div class="table-responsive p-3">
                   <table class="table align-items-center table-flush table-hover" id="dataTableHover">
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
-                        <th>Họ và tên</th>
-                        <th>Tên khác</th>
-                        <th>Mã sinh viên</th>
-                        <th>Lớp</th>
+                        <th>Tên môn học</th>
+                        <th>Mã môn học</th>
+                        <th>Số tín chỉ</th>
                         <th>Ngày tạo</th>
                         <th>Thao tác</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
-                      $query = "SELECT tblstudents.Id,tblclass.className,tblstudents.firstName,
-                      tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber,tblstudents.dateCreated
-                      FROM tblstudents
-                      INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                      ORDER BY tblstudents.firstName, tblstudents.lastName";
+                      $query = "SELECT * FROM tblsubjects ORDER BY subjectName";
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
                       $sn = 0;
@@ -220,23 +183,22 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "delete")
                           $sn = $sn + 1;
                           echo "<tr>
                                   <td>".$sn."</td>
-                                  <td>".$rows['firstName']." ".$rows['lastName']."</td>
-                                  <td>".$rows['otherName']."</td>
-                                  <td>".$rows['admissionNumber']."</td>
-                                  <td>".$rows['className']."</td>
+                                  <td>".$rows['subjectName']."</td>
+                                  <td>".$rows['subjectCode']."</td>
+                                  <td>".$rows['credits']."</td>
                                   <td>".$rows['dateCreated']."</td>
                                   <td>
-                                    <a href='createStudents.php?Id=".$rows['Id']."&action=edit' class='btn btn-sm btn-primary'>
+                                    <a href='manageSubjects.php?Id=".$rows['Id']."&action=edit' class='btn btn-sm btn-primary'>
                                       <i class='fas fa-edit'></i> Sửa
                                     </a>
-                                    <a href='createStudents.php?Id=".$rows['Id']."&action=delete' class='btn btn-sm btn-danger' onclick='return confirm(\"Bạn có chắc muốn xóa sinh viên này?\")'>
+                                    <a href='manageSubjects.php?Id=".$rows['Id']."&action=delete' class='btn btn-sm btn-danger' onclick='return confirm(\"Bạn có chắc muốn xóa môn học này?\")'>
                                       <i class='fas fa-trash'></i> Xóa
                                     </a>
                                   </td>
                                 </tr>";
                         }
                       } else {
-                        echo "<tr><td colspan='7' class='text-center'>Không có dữ liệu</td></tr>";
+                        echo "<tr><td colspan='6' class='text-center'>Không có dữ liệu</td></tr>";
                       }
                       ?>
                     </tbody>

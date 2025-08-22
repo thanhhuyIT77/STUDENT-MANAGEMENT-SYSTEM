@@ -8,10 +8,9 @@ $statusMsg = "";
 $rrw = array();
 
 // Get class information
-$query = "SELECT tblclass.className,tblclassarms.classArmName 
+$query = "SELECT tblclass.className
     FROM tblclassteacher
     INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-    INNER JOIN tblclassarms ON tblclassarms.Id = tblclassteacher.classArmId
     Where tblclassteacher.Id = '$_SESSION[userId]'";
 $rs = $conn->query($query);
 $num = $rs->num_rows;
@@ -25,14 +24,14 @@ if(isset($_POST['download'])) {
     $downloadType = $_POST['downloadType'];
     
     if($downloadType == 'excel') {
-        downloadExcel($conn, $selectedDate, $_SESSION['classId'], $_SESSION['classArmId']);
+        downloadExcel($conn, $selectedDate, $_SESSION['classId']);
     } else if($downloadType == 'pdf') {
-        downloadPDF($conn, $selectedDate, $_SESSION['classId'], $_SESSION['classArmId']);
+        downloadPDF($conn, $selectedDate, $_SESSION['classId']);
     }
 }
 
 // Function to download Excel file
-function downloadExcel($conn, $date, $classId, $classArmId) {
+function downloadExcel($conn, $date, $classId) {
     $filename = "Bao_cao_diem_danh_" . date('Y-m-d', strtotime($date)) . ".xls";
     
     header("Content-type: application/vnd.ms-excel");
@@ -49,7 +48,6 @@ function downloadExcel($conn, $date, $classId, $classArmId) {
     echo '<th>Tên khác</th>';
     echo '<th>Mã sinh viên</th>';
     echo '<th>Lớp</th>';
-    echo '<th>Phân lớp</th>';
     echo '<th>Năm học</th>';
     echo '<th>Học kỳ</th>';
     echo '<th>Trạng thái</th>';
@@ -60,18 +58,16 @@ function downloadExcel($conn, $date, $classId, $classArmId) {
     
     $cnt = 1;
     $ret = mysqli_query($conn, "SELECT tblattendance.Id,tblattendance.status,tblattendance.dateTimeTaken,tblclass.className,
-        tblclassarms.classArmName,tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
-        tblstudents.firstName,tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber
-        FROM tblattendance
-        INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-        INNER JOIN tblclassarms ON tblclassarms.Id = tblattendance.classArmId
-        INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId
-        INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
-        INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-        WHERE tblattendance.dateTimeTaken = '$date' 
-        AND tblattendance.classId = '$classId' 
-        AND tblattendance.classArmId = '$classArmId'
-        ORDER BY tblstudents.firstName, tblstudents.lastName");
+         tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
+         tblstudents.firstName,tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber
+         FROM tblattendance
+         INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
+         INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId
+         INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
+         INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
+         WHERE tblattendance.dateTimeTaken = '$date' 
+         AND tblattendance.classId = '$classId'
+         ORDER BY tblstudents.firstName, tblstudents.lastName");
     
     if(mysqli_num_rows($ret) > 0) {
         while ($row = mysqli_fetch_array($ret)) {
@@ -84,7 +80,6 @@ function downloadExcel($conn, $date, $classId, $classArmId) {
             echo '<td>' . $row['otherName'] . '</td>';
             echo '<td>' . $row['admissionNumber'] . '</td>';
             echo '<td>' . $row['className'] . '</td>';
-            echo '<td>' . $row['classArmName'] . '</td>';
             echo '<td>' . $row['sessionName'] . '</td>';
             echo '<td>' . $row['termName'] . '</td>';
             echo '<td>' . $status . '</td>';
@@ -93,7 +88,7 @@ function downloadExcel($conn, $date, $classId, $classArmId) {
             $cnt++;
         }
     } else {
-        echo '<tr><td colspan="11" style="text-align: center;">Không có dữ liệu điểm danh cho ngày này</td></tr>';
+        echo '<tr><td colspan="10" style="text-align: center;">Không có dữ liệu điểm danh cho ngày này</td></tr>';
     }
     
     echo '</tbody>';
@@ -102,10 +97,10 @@ function downloadExcel($conn, $date, $classId, $classArmId) {
 }
 
 // Function to download PDF (placeholder - would need TCPDF or similar library)
-function downloadPDF($conn, $date, $classId, $classArmId) {
+function downloadPDF($conn, $date, $classId) {
     // This would require TCPDF or similar PDF library
     // For now, redirect to Excel download
-    downloadExcel($conn, $date, $classId, $classArmId);
+    downloadExcel($conn, $date, $classId);
 }
 
 ?>
@@ -151,7 +146,7 @@ function downloadPDF($conn, $date, $classId, $classArmId) {
             <div class="col-lg-12">
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Tải xuống báo cáo điểm danh - Lớp (<?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?> - <?php echo isset($rrw['classArmName']) ? $rrw['classArmName'] : 'N/A'; ?>)</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Tải xuống báo cáo điểm danh - Lớp (<?php echo isset($rrw['className']) ? $rrw['className'] : 'N/A'; ?>)</h6>
                 </div>
                 <div class="card-body">
                   <form method="post">
@@ -198,7 +193,6 @@ function downloadPDF($conn, $date, $classId, $classArmId) {
                               <th>Tên khác</th>
                               <th>Mã sinh viên</th>
                               <th>Lớp</th>
-                              <th>Phân lớp</th>
                               <th>Năm học</th>
                               <th>Học kỳ</th>
                               <th>Trạng thái</th>
@@ -253,14 +247,13 @@ function downloadPDF($conn, $date, $classId, $classArmId) {
           type: 'POST',
           data: {
             date: selectedDate,
-            classId: '<?php echo $_SESSION['classId']; ?>',
-            classArmId: '<?php echo $_SESSION['classArmId']; ?>'
+            classId: '<?php echo $_SESSION['classId']; ?>'
           },
           success: function(response) {
             $('#previewData').html(response);
           },
           error: function() {
-            $('#previewData').html('<tr><td colspan="11" class="text-center text-danger">Lỗi khi tải dữ liệu</td></tr>');
+            $('#previewData').html('<tr><td colspan="10" class="text-center text-danger">Lỗi khi tải dữ liệu</td></tr>');
           }
         });
       }
