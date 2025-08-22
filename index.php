@@ -4,7 +4,7 @@ session_start();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
 
@@ -14,7 +14,7 @@ session_start();
     <meta name="description" content="">
     <meta name="author" content="">
     <link href="img/logo/attnlg.jpg" rel="icon">
-    <title>Code Camp BD - Login</title>
+    <title>Hệ thống điểm danh sinh viên - Đăng nhập</title>
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/ruang-admin.min.css" rel="stylesheet">
@@ -31,25 +31,26 @@ session_start();
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="login-form">
-                                    <h5 align="center">STUDENT ATTENDANCE SYSTEM</h5>
+                                    <h5 align="center">HỆ THỐNG ĐIỂM DANH SINH VIÊN</h5>
                                     <div class="text-center">
                                         <img src="img/logo/attnlg.jpg" style="width:100px;height:100px">
                                         <br><br>
-                                        <h1 class="h4 text-gray-900 mb-4">Login Panel</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Đăng nhập</h1>
                                     </div>
                                     <form class="user" method="Post" action="">
                                         <div class="form-group">
-                                            <select required name="userType" class="form-control mb-3">
-                                                <option value="">--Select User Roles--</option>
-                                                <option value="Administrator">Administrator</option>
-                                                <option value="ClassTeacher">ClassTeacher</option>
+                                            <select required name="userType" class="form-control mb-3" id="userTypeSelect">
+                                                <option value="">--Chọn vai trò--</option>
+                                                <option value="Administrator">Quản trị viên</option>
+                                                <option value="ClassTeacher">Giáo viên chủ nhiệm</option>
+                                                <option value="Student">Sinh viên</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" class="form-control" required name="username" id="exampleInputEmail" placeholder="Enter Email Address">
+                                            <input type="text" class="form-control" required name="username" id="usernameInput" placeholder="Nhập email hoặc mã sinh viên">
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" name="password" required class="form-control" id="exampleInputPassword" placeholder="Enter Password">
+                                            <input type="password" name="password" required class="form-control" id="exampleInputPassword" placeholder="Nhập mật khẩu">
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small" style="line-height: 1.5rem;">
@@ -59,7 +60,7 @@ session_start();
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="submit" class="btn btn-success btn-block" value="Login" name="login" />
+                                            <input type="submit" class="btn btn-success btn-block" value="Đăng nhập" name="login" />
                                         </div>
                                     </form>
 
@@ -94,7 +95,7 @@ session_start();
       else{
 
         echo "<div class='alert alert-danger' role='alert'>
-        Invalid Username/Password!
+        Email hoặc mật khẩu không đúng!
         </div>";
 
       }
@@ -123,7 +124,36 @@ session_start();
       else{
 
         echo "<div class='alert alert-danger' role='alert'>
-        Invalid Username/Password!
+        Email hoặc mật khẩu không đúng!
+        </div>";
+
+      }
+    }
+    else if($userType == "Student"){
+
+      $query = "SELECT * FROM tblstudents WHERE admissionNumber = '$username' AND password = '$password'";
+      $rs = $conn->query($query);
+      $num = $rs->num_rows;
+      $rows = $rs->fetch_assoc();
+
+      if($num > 0){
+
+        $_SESSION['userId'] = $rows['Id'];
+        $_SESSION['firstName'] = $rows['firstName'];
+        $_SESSION['lastName'] = $rows['lastName'];
+        $_SESSION['admissionNumber'] = $rows['admissionNumber'];
+        $_SESSION['classId'] = $rows['classId'];
+        $_SESSION['classArmId'] = $rows['classArmId'];
+
+        echo "<script type = \"text/javascript\">
+        window.location = (\"Student/index.php\")
+        </script>";
+      }
+
+      else{
+
+        echo "<div class='alert alert-danger' role='alert'>
+        Mã sinh viên hoặc mật khẩu không đúng!
         </div>";
 
       }
@@ -131,7 +161,7 @@ session_start();
     else{
 
         echo "<div class='alert alert-danger' role='alert'>
-        Invalid Username/Password!
+        Vui lòng chọn vai trò và nhập thông tin đăng nhập!
         </div>";
 
     }
@@ -162,6 +192,20 @@ session_start();
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/ruang-admin.min.js"></script>
+    
+    <script>
+    // Thay đổi placeholder dựa trên loại user được chọn
+    document.getElementById('userTypeSelect').addEventListener('change', function() {
+        var usernameInput = document.getElementById('usernameInput');
+        var selectedValue = this.value;
+        
+        if (selectedValue === 'Student') {
+            usernameInput.placeholder = 'Nhập mã sinh viên';
+        } else {
+            usernameInput.placeholder = 'Nhập email';
+        }
+    });
+    </script>
 </body>
 
 </html>
