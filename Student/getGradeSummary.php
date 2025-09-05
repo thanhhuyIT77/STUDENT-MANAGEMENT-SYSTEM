@@ -92,7 +92,7 @@ if(isset($_POST['sessionTermId']) && isset($_POST['studentId'])) {
         echo '<div class="card-header"><h6 class="mb-0">Phân tích kết quả</h6></div>';
         echo '<div class="card-body">';
         
-        if($overallAverage >= 8.0) {
+        if($overallAverage >= 8.5) {
             echo '<div class="alert alert-success">';
             echo '<i class="fas fa-star"></i> <strong>Xuất sắc!</strong> Bạn đã đạt kết quả rất tốt trong học kỳ này.';
             echo '</div>';
@@ -103,6 +103,10 @@ if(isset($_POST['sessionTermId']) && isset($_POST['studentId'])) {
         } elseif($overallAverage >= 5.5) {
             echo '<div class="alert alert-warning">';
             echo '<i class="fas fa-exclamation-triangle"></i> <strong>Trung bình!</strong> Bạn cần cố gắng hơn nữa để cải thiện kết quả.';
+            echo '</div>';
+               } elseif($overallAverage >= 4.0) {
+            echo '<div class="alert alert-warning">';
+            echo '<i class="fas fa-exclamation-triangle"></i> <strong>Yếu!</strong> Bạn cần cố gắng hơn nữa để cải thiện kết quả.';
             echo '</div>';
         } else {
             echo '<div class="alert alert-danger">';

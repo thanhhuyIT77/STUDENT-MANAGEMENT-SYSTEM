@@ -59,13 +59,25 @@ $row = array();
                   <form method="post">
                     <div class="form-group row mb-3">
                         <div class="col-xl-6">
-                        <label class="form-control-label">Chọn ngày<span class="text-danger ml-2">*</span></label>
-                            <input type="date" class="form-control" name="dateTaken" id="exampleInputFirstName" placeholder="Class Arm Name">
+                        <label class="form-control-label">Chọn lớp<span class="text-danger ml-2">*</span></label>
+                        <?php
+                        $qry= "SELECT * FROM tblclass ORDER BY className ASC";
+                        $result = $conn->query($qry);
+                        $num = $result->num_rows;		
+                        if ($num > 0){
+                          echo ' <select required name="classId" class="form-control mb-3">';
+                          echo'<option value="">--Chọn lớp--</option>';
+                          while ($rows = $result->fetch_assoc()){
+                          echo'<option value="'.$rows['Id'].'" >'.$rows['className'].'</option>';
+                              }
+                                  echo '</select>';
+                              }
+                            ?>  
                         </div>
-                        <!-- <div class="col-xl-6">
-                        <label class="form-control-label">Class Arm Name<span class="text-danger ml-2">*</span></label>
-                      <input type="text" class="form-control" name="classArmName" value="<?php echo $row['classArmName'];?>" id="exampleInputFirstName" placeholder="Class Arm Name">
-                        </div> -->
+                        <div class="col-xl-6">
+                        <label class="form-control-label">Chọn ngày<span class="text-danger ml-2">*</span></label>
+                            <input type="date" class="form-control" name="dateTaken" required>
+                        </div>
                     </div>
                     <button type="submit" name="view" class="btn btn-primary">Xem điểm danh</button>
                   </form>
@@ -89,7 +101,6 @@ $row = array();
                         <th>Tên đệm</th>
                         <th>Mã nhập học</th>
                         <th>Lớp</th>
-                        <th>Phân lớp</th>
                         <th>Năm học</th>
                         <th>Học kỳ</th>
                         <th>Trạng thái</th>
@@ -104,17 +115,17 @@ $row = array();
                     if(isset($_POST['view'])){
 
                       $dateTaken =  $_POST['dateTaken'];
+                      $classId = $_POST['classId'];
 
                       $query = "SELECT tblattendance.Id,tblattendance.status,tblattendance.dateTimeTaken,tblclass.className,
-                      tblclassarms.classArmName,tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
+                      tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
                       tblstudents.firstName,tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber
                       FROM tblattendance
                       INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblattendance.classArmId
                       INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId
                       INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
                       INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-                      where tblattendance.dateTimeTaken = '$dateTaken' and tblattendance.classId = '$_SESSION[classId]' and tblattendance.classArmId = '$_SESSION[classArmId]'";
+                      where tblattendance.dateTimeTaken = '$dateTaken' and tblattendance.classId = '$classId'";
                       $rs = $conn->query($query);
                       $num = $rs->num_rows;
                       $sn=0;
@@ -133,7 +144,6 @@ $row = array();
                                 <td>".$rows['otherName']."</td>
                                 <td>".$rows['admissionNumber']."</td>
                                 <td>".$rows['className']."</td>
-                                <td>".$rows['classArmName']."</td>
                                 <td>".$rows['sessionName']."</td>
                                 <td>".$rows['termName']."</td>
                                 <td style='background-color:".$colour."'>".$status."</td>

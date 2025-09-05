@@ -85,7 +85,7 @@ $statusMsg = "";
                         <div class="col-xl-6">
                         <label class="form-control-label">Chọn học sinh<span class="text-danger ml-2">*</span></label>
                         <?php
-                        $qry= "SELECT * FROM tblstudents where classId = '$_SESSION[classId]' and classArmId = '$_SESSION[classArmId]' ORDER BY firstName ASC";
+                        $qry= "SELECT * FROM tblstudents where classId = '$_SESSION[classId]' ORDER BY firstName ASC";
                         $result = $conn->query($qry);
                         $num = $result->num_rows;		
                         if ($num > 0){
@@ -143,7 +143,6 @@ $statusMsg = "";
                         <th>Tên đệm</th>
                         <th>Mã nhập học</th>
                         <th>Lớp</th>
-                        <th>Phân lớp</th>
                         <th>Năm học</th>
                         <th>Học kỳ</th>
                         <th>Trạng thái</th>
@@ -163,15 +162,14 @@ $statusMsg = "";
                        if($type == "1"){ //All Attendance
 
                         $query = "SELECT tblattendance.Id,tblattendance.status,tblattendance.dateTimeTaken,tblclass.className,
-                        tblclassarms.classArmName,tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
+                        tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
                         tblstudents.firstName,tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber
                         FROM tblattendance
                         INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-                        INNER JOIN tblclassarms ON tblclassarms.Id = tblattendance.classArmId
                         INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId
                         INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
                         INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-                        where tblattendance.admissionNo = '$admissionNumber' and tblattendance.classId = '$_SESSION[classId]' and tblattendance.classArmId = '$_SESSION[classArmId]'";
+                        where tblattendance.admissionNo = '$admissionNumber' and tblattendance.classId = '$_SESSION[classId]'";
 
                        }
                        if($type == "2"){ //Single Date Attendance
@@ -179,15 +177,14 @@ $statusMsg = "";
                         $singleDate =  $_POST['singleDate'];
 
                          $query = "SELECT tblattendance.Id,tblattendance.status,tblattendance.dateTimeTaken,tblclass.className,
-                        tblclassarms.classArmName,tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
+                        tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
                         tblstudents.firstName,tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber
                         FROM tblattendance
                         INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-                        INNER JOIN tblclassarms ON tblclassarms.Id = tblattendance.classArmId
                         INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId
                         INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
                         INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-                        where tblattendance.dateTimeTaken = '$singleDate' and tblattendance.admissionNo = '$admissionNumber' and tblattendance.classId = '$_SESSION[classId]' and tblattendance.classArmId = '$_SESSION[classArmId]'";
+                        where tblattendance.dateTimeTaken = '$singleDate' and tblattendance.admissionNo = '$admissionNumber' and tblattendance.classId = '$_SESSION[classId]'";
                         
 
                        }
@@ -197,15 +194,14 @@ $statusMsg = "";
                          $toDate =  $_POST['toDate'];
 
                          $query = "SELECT tblattendance.Id,tblattendance.status,tblattendance.dateTimeTaken,tblclass.className,
-                        tblclassarms.classArmName,tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
+                        tblsessionterm.sessionName,tblsessionterm.termId,tblterm.termName,
                         tblstudents.firstName,tblstudents.lastName,tblstudents.otherName,tblstudents.admissionNumber
                         FROM tblattendance
                         INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-                        INNER JOIN tblclassarms ON tblclassarms.Id = tblattendance.classArmId
                         INNER JOIN tblsessionterm ON tblsessionterm.Id = tblattendance.sessionTermId
                         INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
                         INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-                        where tblattendance.dateTimeTaken between '$fromDate' and '$toDate' and tblattendance.admissionNo = '$admissionNumber' and tblattendance.classId = '$_SESSION[classId]' and tblattendance.classArmId = '$_SESSION[classArmId]'";
+                        where tblattendance.dateTimeTaken between '$fromDate' and '$toDate' and tblattendance.admissionNo = '$admissionNumber' and tblattendance.classId = '$_SESSION[classId]'";
                         
                        }
 
@@ -227,7 +223,6 @@ $statusMsg = "";
                                 <td>".$rows['otherName']."</td>
                                 <td>".$rows['admissionNumber']."</td>
                                 <td>".$rows['className']."</td>
-                                <td>".$rows['classArmName']."</td>
                                 <td>".$rows['sessionName']."</td>
                                 <td>".$rows['termName']."</td>
                                 <td style='background-color:".$colour."'>".$status."</td>

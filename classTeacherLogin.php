@@ -76,7 +76,6 @@ session_start();
       $_SESSION['lastName'] = $rows['lastName'];
       $_SESSION['emailAddress'] = $rows['emailAddress'];
       $_SESSION['classId'] = $rows['classId'];
-      $_SESSION['classArmId'] = $rows['classArmId'];
 
       echo "<script type = \"text/javascript\">
       window.location = (\"ClassTeacher/index.php\")

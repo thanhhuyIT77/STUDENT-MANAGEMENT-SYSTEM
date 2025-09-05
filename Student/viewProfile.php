@@ -94,7 +94,7 @@ $recentAttendance = $conn->query($query);
                       <table class="table table-borderless">
                         <tr>
                           <td width="150"><strong>Họ và tên:</strong></td>
-                          <td><?php echo isset($studentInfo['firstName']) ? $studentInfo['firstName'] . ' ' . $studentInfo['lastName'] . ' ' . $studentInfo['otherName'] : 'N/A'; ?></td>
+                          <td><?php echo isset($studentInfo['firstName']) ? $studentInfo['firstName'] . ' ' . $studentInfo['lastName'] : 'N/A'; ?></td>
                         </tr>
                         <tr>
                           <td><strong>Mã sinh viên:</strong></td>
